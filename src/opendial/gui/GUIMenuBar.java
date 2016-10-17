@@ -386,7 +386,9 @@ public class GUIMenuBar extends JMenuBar {
 	 */
 	protected void showAboutPanel() {
 		try {
-			BufferedImage original = ImageIO.read(new File(GUIFrame.ICON_PATH));
+			
+			//This is failing on Windows... Must solve it later.
+			//BufferedImage original = ImageIO.read(new File(GUIFrame.ICON_PATH));
 
 			JLabel label = new JLabel();
 			Font font = label.getFont();
@@ -425,7 +427,7 @@ public class GUIMenuBar extends JMenuBar {
 			ep.setBackground(label.getBackground());
 
 			JOptionPane.showMessageDialog(frame.getFrame(), ep, "About OpenDial",
-					JOptionPane.INFORMATION_MESSAGE, new ImageIcon(original));
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 		catch (Exception f) {
 			log.warning("could not show about box: " + f);
