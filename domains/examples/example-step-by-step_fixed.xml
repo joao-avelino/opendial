@@ -2,7 +2,7 @@
 <domain>
 	
 	<!-- NLU model -->
-	<model trigger="u_u">
+	<model trigger="u_u, v_m">
 		 
   		<rule>
 			<case>

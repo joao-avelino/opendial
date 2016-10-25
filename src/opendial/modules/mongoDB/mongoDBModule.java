@@ -43,7 +43,8 @@ public class mongoDBModule implements Module {
 
 	// logger
 	final static Logger log = Logger.getLogger("OpenDial");
-	MongoCollection<Document> collection;
+	MongoCollection<Document> inCollection;
+	MongoCollection<Document> outCollection;
 	
 	/** the dialogue system */
 	DialogueSystem system;
@@ -68,7 +69,7 @@ public class mongoDBModule implements Module {
 			while(threadAlive)
 			{
 
-				MongoCursor<Document> cursor = collection.find().cursorType(CursorType.TailableAwait).noCursorTimeout(true).iterator();
+				MongoCursor<Document> cursor = inCollection.find().cursorType(CursorType.TailableAwait).noCursorTimeout(true).iterator();
 
 				try {
 				    while (cursor.hasNext()) {
@@ -81,7 +82,7 @@ public class mongoDBModule implements Module {
 				        {
 				        	varName = doc.get("varName").toString();
 				        }else{
-				        	log.warning("Received badly structured data... I could not find the varName field...");
+				        	log.warning("Received badly structured data... Could not find the varName field...");
 				       		continue;
 				        }
 
@@ -91,7 +92,7 @@ public class mongoDBModule implements Module {
 
 				       	if(nBestList == null)
 				       	{
-				       		log.warning("Received badly structured data... I could not find the nBestList field...");
+				       		log.warning("Received badly structured data... Could not find the nBestList field...");
 				       		continue;
 				       	}
 
@@ -112,7 +113,7 @@ public class mongoDBModule implements Module {
 				  				value = element.get("value").toString();
 				  			}else{
 
-				       			log.warning("Received badly structured data... I could not find the value field...");
+				       			log.warning("Received badly structured data... Could not find the value field...");
 				       			continue;				  				
 				  			}
 
@@ -122,43 +123,14 @@ public class mongoDBModule implements Module {
 				  				prob = Double.parseDouble(probString);
 				  			}else{
 				  				prob = 1.0;
-				  				log.info("Cant find probability associated with an event. Assuming 1.0. The distribution will then be renormalized");
+				  				log.info("No probability set. Assuming 1.0.");
 				  			}
 
 				  			builder.addRow(value, prob);
-
-				       		System.out.println(varName +": " + value + "(" + prob.toString()+")");
-
 				       	}
 
+				       	//Add the table to the system
 				       	system.addContent(builder.build());
-
-				       	// Normalize the probabilities if they sum up to more than 1. If less, openDial will take care of it.
-
-				       	/*CODE*/
-
-				        //Let's update the state variables with the received values
-				       /* int i = 0;
-				        for(String key : keys)
-				        {
-
-				        	//Useless
-				       		Map<String, Double> nBestList = new HashMap<String, Double>();
-				       		nBestList.put(values.get(i).toString(), 0.3);
-				       		//*******
-				        	
-				        	CategoricalTable.Builder builder = new CategoricalTable.Builder(key);
-
-				        	for(String input : nBestList.keySet())
-				        	{
-
-				        		builder.addRow(input, nBestList.get(input));
-				        	}
-				        	system.addContent(builder.build());
-				        	i++;
-				        }*/
-				        				        
-
 				    }
 				} finally {
 				    cursor.close();
@@ -202,13 +174,15 @@ public class mongoDBModule implements Module {
 
 	}
 
-	@Override
-	public void start() {
 
 	/*
 	*  Connect to a mongoDB database so that we can subscribe and publish events
 	*	
 	*/
+
+	@Override
+	public void start() {
+
 
 		String textUri = system.getSettings().params.getProperty("mongodbURI");
 		openDialIn = system.getSettings().params.getProperty("openDialIn");
@@ -221,7 +195,12 @@ public class mongoDBModule implements Module {
 
 		mongoClient.getDatabase(databaseName).getCollection(openDialIn).drop();
 		mongoClient.getDatabase(databaseName).createCollection(openDialIn, new CreateCollectionOptions().capped(true).sizeInBytes(0x100000));	
-		collection = mongoClient.getDatabase(databaseName).getCollection(openDialIn);
+		inCollection = mongoClient.getDatabase(databaseName).getCollection(openDialIn);
+
+		mongoClient.getDatabase(databaseName).getCollection(openDialOut).drop();
+		mongoClient.getDatabase(databaseName).createCollection(openDialOut, new CreateCollectionOptions().capped(true).sizeInBytes(0x100000));
+
+		outCollection = mongoClient.getDatabase(databaseName).getCollection(openDialOut);
 
 		
 		sub = new openDialInSubscriber();
@@ -236,13 +215,28 @@ public class mongoDBModule implements Module {
 
 	/**
 	 *
+	 * Check
 	 *
 	 */
 	@Override
 	public void trigger(DialogueState state, Collection<String> updatedVars) {
 
+		ArrayList<Document> varsToSend = new ArrayList<Document>();
 
+		//Let's check all the updated vars and publish them to the collection.
+		//For now it will only send the most probable value
 
+		for(String var : updatedVars)
+		{
+			if(state.hasChanceNode(var) && !paused)
+			{
+				String value = state.queryProb(var).getBest().toString();
+				Document varToSend = new Document(var, value);
+				varsToSend.add(varToSend);
+			}
+
+			outCollection.insertMany(varsToSend);
+		}
 		
 
 
