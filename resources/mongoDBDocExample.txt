@@ -1,0 +1,18 @@
+{
+    "_id" : ObjectId("55daa2aee60dd21ce8aad8ac"),
+    "varName" : "u_u",
+    "nBestList" : [ 
+        {
+            "value" : "Move right",
+            "prob" : "0.6"
+        }, 
+        {
+            "value" : "More sight",
+            "prob" : "0.3"
+        }, 
+        {
+            "value" : "Play safe",
+            "prob" : "0.1"
+        }
+    ]
+}
