@@ -134,8 +134,8 @@
 	
 		<settings>
                 <modules>opendial.modules.mongoDBModules.mongoDBModule</modules>
-				<mongodbURI>mongodb://accountUser:bfbcc49efb3b32007bb05b6f09ce7e33@54.158.235.28:27017/AHA</mongodbURI>
-				<openDialIn>opendialInTopic</openDialIn>
+				<mongodbURI>mongodb://localhost:27017</mongodbURI>
+				<openDialIn>openDialInTopic</openDialIn>
 				<openDialOut>openDialOutTopic</openDialOut>
 				<databaseName>AHA</databaseName>
 		</settings>

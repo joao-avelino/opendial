@@ -231,7 +231,12 @@ public class mongoDBModule implements Module {
 			if(state.hasChanceNode(var) && !paused)
 			{
 				String value = state.queryProb(var).getBest().toString();
-				Document varToSend = new Document(var, value);
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("varName", var);
+				map.put("value", value);
+				Document varToSend = new Document(map);
+
 				varsToSend.add(varToSend);
 			}
 
