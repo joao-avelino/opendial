@@ -108,7 +108,7 @@ public class mongoDBModule implements Module {
 
 				       		//Check if values and probability fields exist and process them.
 
-				  			if(element.containsKey("value"))
+				  			if(element.containsKey("value") && element.get("value") != null)
 				  			{
 				  				value = element.get("value").toString();
 				  			}else{
@@ -130,6 +130,7 @@ public class mongoDBModule implements Module {
 				       	}
 
 				       	//Add the table to the system
+				       	if(!builder.isEmpty())
 				       	system.addContent(builder.build());
 				    }
 				} finally {

@@ -16,6 +16,14 @@
 				</effect>
 			</case>
 			<case>
+				<condition>
+					<if var="u_u" relation="=" value="tell exercises"/>
+				</condition>
+				<effect prob="1">
+					<set var="u_m" value="Exercise: {ExerciseList}"/>
+				</effect>
+			</case>
+			<case>
 				<condition operator="or">
 					<if var="u_u" value="turn * right" relation="contains" />
 					<if var="u_u" value="move * right" relation="contains" />
@@ -133,11 +141,14 @@
 	</model>
 	
 		<settings>
-                <modules>opendial.modules.mongoDBModules.mongoDBModule</modules>
+                <modules>opendial.modules.mongoDBModules.mongoDBModule, opendial.plugins.NuanceSpeech</modules>
 				<mongodbURI>mongodb://localhost:27017</mongodbURI>
 				<openDialIn>openDialInTopic</openDialIn>
 				<openDialOut>openDialOutTopic</openDialOut>
 				<databaseName>AHA</databaseName>
+                  <id>NMDPTRIAL_joao_manuel_avelino_gmail_com20160926153657</id>
+                  <key>31a53782c0a2f73cb0bcff27a56511f818c92672c708db096a9d1423a24533d3ea6b55ab0d4ce7bd08e7e5ad4cf6a565bfcbd786d4b38f3e50a461f2e994c5d4</key>
+                  <lang>eng-USA</lang>
 		</settings>
 
 </domain>
