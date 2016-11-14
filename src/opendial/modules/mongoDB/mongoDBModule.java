@@ -222,14 +222,14 @@ public class mongoDBModule implements Module {
 	@Override
 	public void trigger(DialogueState state, Collection<String> updatedVars) {
 
-		ArrayList<Document> varsToSend = new ArrayList<Document>();
+		//ArrayList<Document> varsToSend = new ArrayList<Document>();
 
 		//Let's check all the updated vars and publish them to the collection.
 		//For now it will only send the most probable value
 
 		for(String var : updatedVars)
 		{
-			if(state.hasChanceNode(var) && !paused)
+			if(state.hasChanceNode(var) && !paused && !var.equals("s_u") && !var.equals("s_m"))
 			{
 				String value = state.queryProb(var).getBest().toString();
 				
@@ -237,11 +237,12 @@ public class mongoDBModule implements Module {
 				map.put("varName", var);
 				map.put("value", value);
 				Document varToSend = new Document(map);
-
-				varsToSend.add(varToSend);
+				outCollection.insertOne(varToSend);
+				//varsToSend.add(varToSend);
 			}
-
-			outCollection.insertMany(varsToSend);
+			
+			//if(!varsToSend.isEmpty())
+			//outCollection.insertMany(varsToSend);
 		}
 		
 
