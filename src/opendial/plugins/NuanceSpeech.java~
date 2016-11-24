@@ -343,8 +343,7 @@ public class NuanceSpeech implements Module {
 					system.getSettings().params.getProperty("id"));
 			builder.setParameter("appKey",
 					system.getSettings().params.getProperty("key"));
-			builder.setParameter("id", "0000");
-			builder.setParameter("voice", "Tom");
+			builder.setParameter("id", "0000"); 
 			asrURI = builder.build();
 			builder.setHost("tts.nuancemobility.net");
 			builder.setPath("/NMDPTTSCmdServlet/tts");

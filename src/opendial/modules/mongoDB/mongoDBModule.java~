@@ -81,17 +81,6 @@ public class mongoDBModule implements Module {
 				        if(doc.containsKey("varName"))
 				        {
 				        	varName = doc.get("varName").toString();
-				        	if(varName.equals("u_m") || varName.equals("a_m")) //Change this to variables to ignore
-				        		continue;
-				        	else if(!system.getFloor().equals("free"))
-				        	{
-				        		try{
-									this.sleep(500);
-								}catch(InterruptedException e){
-
-								log.warning("Subscriber error: " + e);
-								}
-				        	}
 				        }else{
 				        	log.warning("Received badly structured data... Could not find the varName field...");
 				       		continue;
@@ -209,8 +198,8 @@ public class mongoDBModule implements Module {
 		mongoClient.getDatabase(databaseName).createCollection(openDialIn, new CreateCollectionOptions().capped(true).sizeInBytes(0x100000));	
 		inCollection = mongoClient.getDatabase(databaseName).getCollection(openDialIn);
 
-		//mongoClient.getDatabase(databaseName).getCollection(openDialOut).drop();
-		//mongoClient.getDatabase(databaseName).createCollection(openDialOut, new CreateCollectionOptions().capped(true).sizeInBytes(0x100000));
+		mongoClient.getDatabase(databaseName).getCollection(openDialOut).drop();
+		mongoClient.getDatabase(databaseName).createCollection(openDialOut, new CreateCollectionOptions().capped(true).sizeInBytes(0x100000));
 
 		outCollection = mongoClient.getDatabase(databaseName).getCollection(openDialOut);
 
@@ -245,15 +234,11 @@ public class mongoDBModule implements Module {
 				String value = state.queryProb(var).getBest().toString();
 				
 				Map<String, Object> map = new HashMap<String, Object>();
-
-				if(!var.equals("cmd"))
-					continue;
-
 				map.put("varName", var);
 				map.put("value", value);
 				Document varToSend = new Document(map);
-				outCollection.insertOne(varToSend);
-				//varsToSend.add(varToSend);
+
+				varsToSend.add(varToSend);
 			}
 			
 			//if(!varsToSend.isEmpty())

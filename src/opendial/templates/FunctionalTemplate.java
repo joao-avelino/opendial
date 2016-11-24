@@ -111,10 +111,12 @@ public class FunctionalTemplate implements Template {
 
 	@Override
 	public String fillSlots(Assignment fillers) {
+
 		return getValue(fillers).toString();
 	}
 
 	public Value getValue(Assignment fillers) {
+
 		List<String> filledParams = parameters.stream()
 				.map(p -> p.fillSlots(fillers)).collect(Collectors.toList());
 

@@ -215,9 +215,12 @@ class RegexTemplate implements Template {
 	 */
 	@Override
 	public String fillSlots(Assignment fillers) {
+
+
 		if (slots.isEmpty()) {
 			return rawString;
 		}
+
 		String filled = rawString;
 		for (String slot : slots.keySet()) {
 			Value v = fillers.getValue(slot);

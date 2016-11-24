@@ -141,7 +141,7 @@
 	</model>
 	
 		<settings>
-                <modules>opendial.modules.mongoDBModules.mongoDBModule, opendial.plugins.NuanceSpeech</modules>
+                <modules>opendial.modules.mongoDBModules.mongoDBModule, opendial.plugins.NuanceSpeech, opendial.modules.examples.WizardControl</modules>
 				<mongodbURI>mongodb://localhost:27017</mongodbURI>
 				<openDialIn>openDialInTopic</openDialIn>
 				<openDialOut>openDialOutTopic</openDialOut>
